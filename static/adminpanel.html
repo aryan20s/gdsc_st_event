@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+
+<body>
+    <script src="/static/adminpanel.js"></script>
+    <hr> <br>
+
+    <label for="url_tb">Server URL:</label>
+    <input type="text" id="url_tb" name="url_tb"/>
+    <label for="pass_tb">Admin Password:</label>
+    <input type="password" id="pass_tb" name="pass_tb"/>
+
+    <br> <br> <hr> <br>
+    /change/
+    <label for="change_teamid_tb">Team ID:</label>
+    <input type="text" id="change_teamid_tb" name="change_teamid_tb"/>
+    <button onclick="change_team()">Change current Team</button>
+    <br> <br>
+    <textarea readonly="readonly" id="change_out" cols="40" rows="5"></textarea>
+
+    <br> <br> <hr> <br>
+    /delete/
+    <label for="delete_teamid_tb">Team ID:</label>
+    <input type="text" id="delete_teamid_tb" name="delete_teamid_tb"/>
+    <button onclick="delete_team()">Delete Team</button>
+    <br> <br>
+    <textarea readonly="readonly" id="delete_out" cols="40" rows="5"></textarea>
+
+    <br> <br> <hr> <br>
+    /getall/
+    <button onclick="get_all()">Get All Team Data</button>
+    <br> <br>
+    <textarea readonly="readonly" id="get_all_out" cols="80" rows="100"></textarea>
+
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Panel</title>
+</head>
+
+<body>
+    <script src="/static/testpage.js"></script>
+    <hr> <br>
+
+    <label for="url_tb">Server URL:</label>
+    <input type="text" id="url_tb" name="url_tb"/>
+
+    <br> <br> <hr> <br>
+    /create/
+    <label for="create_teamname_tb">Team Name:</label>
+    <input type="text" id="create_teamname_tb" name="create_teamname_tb"/>
+    <br>
+    <label for="create_teamm1_tb">Member 1 Name:</label>
+    <input type="text" id="create_teamm1_tb" name="create_teamm1_tb"/>
+    <br>
+    <label for="create_teamm2_tb">Member 2 Name:</label>
+    <input type="text" id="create_teamm2_tb" name="create_teamm2_tb"/>
+    <br>
+    <label for="create_teamm3_tb">Member 3 Name:</label>
+    <input type="text" id="create_teamm3_tb" name="create_teamm3_tb"/>
+    <br>
+    <label for="create_teamm4_tb">Member 4 Name:</label>
+    <input type="text" id="create_teamm4_tb" name="create_teamm4_tb"/>
+    <br>
+    <button onclick="create_team()">Create New Team</button>
+    <br> <br>
+    <textarea readonly="readonly" id="create_out" cols="40" rows="5"></textarea>
+
+    <br> <br> <hr> <br>
+    /vote/
+    <button onclick="vote_for_team(1)">Vote Yes</button>
+    <button onclick="vote_for_team(0)">Vote No</button>
+    <br> <br>
+    <textarea readonly="readonly" id="vote_out" cols="40" rows="5"></textarea>
+
+    <br> <br> <hr> <br>
+    /current/
+    <button onclick="get_current_votes()">Get Current Votes</button>
+    <br> <br>
+    <textarea readonly="readonly" id="current_out" cols="40" rows="5"></textarea>
+
+    <br> <br> <hr> <br>
+    /top/
+    <button onclick="get_top_teams()">Get Top Teams</button>
+    <br> <br>
+    <textarea readonly="readonly" id="top_out" cols="80" rows="100"></textarea>
+</body>
+
+</html>
