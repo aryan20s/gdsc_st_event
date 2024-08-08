@@ -29,6 +29,17 @@ function delete_team() {
     })
 }
 
+function toggle_pages() {
+    const pass = document.getElementById("pass_tb").value;
+    const enable_voting = document.getElementById("enable_voting").checked;
+    const enable_create = document.getElementById("enable_create").checked;
+
+    makeReq("/togglepages/", `{"enable_voting": ${enable_voting}, "enable_create": ${enable_create}, "pass": "${pass}"}`, "POST", responseText => {
+        const out_tb = document.getElementById("toggle_pages_out");
+        out_tb.value = JSON.stringify(JSON.parse(responseText), null, 4);
+    })
+}
+
 function get_all() {
     const pass = document.getElementById("pass_tb").value;
 
@@ -36,4 +47,15 @@ function get_all() {
         const out_tb = document.getElementById("get_all_out");
         out_tb.value = JSON.stringify(JSON.parse(responseText), null, 4);
     })
+}
+
+function reset_all() {
+    if (confirm("Are you SURE you want to reset all data?") && confirm("Are you REALLY sure?")) {
+        const pass = document.getElementById("pass_tb").value;
+
+        makeReq("/resetall/", `{"pass": "${pass}"}`, "POST", responseText => {
+            const out_tb = document.getElementById("resetall_out");
+            out_tb.value = JSON.stringify(JSON.parse(responseText), null, 4);
+        })
+    }
 }

@@ -9,24 +9,6 @@ function makeReq(path, data, method, callback) {
     xmlHttp.send(data);
 }
 
-function create_team() {
-    const team_name = document.getElementById("create_teamname_tb").value;
-    const team_m1 = document.getElementById("create_teamm1_tb").value;
-    const team_m2 = document.getElementById("create_teamm2_tb").value;
-    const team_m3 = document.getElementById("create_teamm3_tb").value;
-    const team_m4 = document.getElementById("create_teamm4_tb").value;
-
-    makeReq("/create/", `{"team_name": "${team_name}", "member1": "${team_m1}", ` + 
-        `"member2": "${team_m2}", "member3": "${team_m3}", "member4": "${team_m4}"}`, "POST", responseText => {
-        let jsonData = JSON.parse(responseText);
-        if (jsonData.status !== "ok") {
-            setMessage(true, jsonData.message);
-        } else {
-            setMessage(false, "Team created succesfully!");
-        }
-    })
-}
-
 function setMessage(error, message) {
     let errorMessageDiv = document.getElementById('error_message');
     let successMessageDiv = document.getElementById('success_message');
@@ -41,6 +23,47 @@ function setMessage(error, message) {
     }
 }
 
+function create_team() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split("; teamcreated=");
+    let team_created = null;
+    if (parts.length === 2) team_created = parts.pop().split(';').shift();
+
+    if (team_created !== null) {
+        setMessage(true, "You have already created a team!");
+        return;
+    }
+
+    const team_name = document.getElementById("create_teamname_tb").value;
+    const team_m1 = document.getElementById("create_teamm1_tb").value;
+    const team_m2 = document.getElementById("create_teamm2_tb").value;
+    const team_m3 = document.getElementById("create_teamm3_tb").value;
+    const team_m4 = document.getElementById("create_teamm4_tb").value;
+
+    if (team_name === "") {
+        setMessage(true, "Team name must be specified!");
+        return;
+    }
+    if (team_m1 === "") {
+        setMessage(true, "Member 1 name must be specified!");
+        return;
+    }
+    if (team_m2 === "") {
+        setMessage(true, "Member 2 name must be specified!");
+        return;
+    }
+
+    makeReq("/create/", `{"team_name": "${team_name}", "member1": "${team_m1}", ` + 
+        `"member2": "${team_m2}", "member3": "${team_m3}", "member4": "${team_m4}"}`, "POST", responseText => {
+        let jsonData = JSON.parse(responseText);
+        if (jsonData.status !== "ok") {
+            setMessage(true, jsonData.message);
+        } else {
+            setMessage(false, "Team created succesfully!");
+        }
+    })
+}
+
 function vote_for_team(score) {
     const value = `; ${document.cookie}`;
     const parts = value.split("; voted=");
@@ -49,26 +72,18 @@ function vote_for_team(score) {
 
     if (team_voted !== null) {
         setMessage(true, "You cannot vote for another minute!");
-    } else {
-        setMessage(false, "Voting...");
-        makeReq("/vote/", `{"vote": ${score}}`, "POST", responseText => {
-            let jsonData = JSON.parse(responseText);
-            if (jsonData.status !== "ok") {
-                setMessage(true, jsonData.message);
-            } else {
-                setMessage(false, "Vote succesfully registered!");
-            }
-        });
+        return;
     }
-}
 
-function get_current_team() {
-    let retVal = null;
-
-    makeReq(`/current/`, "", "GET", responseText => {
-        jsonData = JSON.parse(responseText);
-        retVal = jsonData.getElementById("team_name")
-    })
+    setMessage(false, "Voting...");
+    makeReq("/vote/", `{"vote": ${score}}`, "POST", responseText => {
+        let jsonData = JSON.parse(responseText);
+        if (jsonData.status !== "ok") {
+            setMessage(true, jsonData.message);
+        } else {
+            setMessage(false, "Vote succesfully registered!");
+        }
+    });
 }
 
 function get_top_teams() {

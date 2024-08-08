@@ -9,6 +9,7 @@
 <body>
     <div class="container">
         <h1>Vote</h1>
+        <h2 id="team_name_h2"></h1>
         <button onclick="vote_for_team(1)">IN</button>
         <button onclick="vote_for_team(0)">OUT</button>
         <div id="error_message" class="error-message"></div>
@@ -16,5 +17,20 @@
     </div>
 
     <script src="/static/testpage.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            makeReq('/current/', "", "GET", responseText => {
+                teamname = JSON.parse(responseText).team_name
+
+                if (teamname === undefined || teamname === null) {
+                    document.getElementById('team_name_h2').textContent = "Voting is currently closed.";
+                } else {
+                    document.getElementById('team_name_h2').textContent = `Voting for ${teamname}`;
+                }
+
+            })
+        });
+    </script>
 </body>
 </html>

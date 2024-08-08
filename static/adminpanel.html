@@ -32,10 +32,27 @@
     <textarea readonly="readonly" id="delete_out" cols="40" rows="5"></textarea>
 
     <br> <br> <hr> <br>
+    /togglepages/
+    <br>
+    <label for="enable_voting">Voting: </label>
+    <input type="checkbox" id="enable_voting" name="enable_voting"/>
+    <label for="enable_create">Create Team: </label>
+    <input type="checkbox" id="enable_create" name="enable_create"/>
+    <button onclick="toggle_pages()">Toggle Enabled</button>
+    <br> <br>
+    <textarea readonly="readonly" id="toggle_pages_out" cols="40" rows="5"></textarea>
+
+    <br> <br> <hr> <br>
     /getall/
     <button onclick="get_all()">Get All Team Data</button>
     <br> <br>
     <textarea readonly="readonly" id="get_all_out" cols="80" rows="100"></textarea>
+
+    <br> <br> <hr> <br>
+    /resetall/
+    <button onclick="reset_all()">Reset All (VERY DANGEROUS)</button>
+    <br> <br>
+    <textarea readonly="readonly" id="resetall_out" cols="40" rows="5"></textarea>
 
 </body>
 

@@ -9,8 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 PASS_HASH = "fb74185cbe8adab9724de6f3c3bd6f3a56be8fed7784cee31ad26ce13b1a23dd"
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///stk.db"
-cur_team = -1
 db = SQLAlchemy(app)
+
+cur_team = -1
+voting_page_enabled = False
+create_page_enabled = False
 
 
 class Team(db.Model):
@@ -89,7 +92,7 @@ def add_votes(score):
 
 # create a team
 @app.route("/create/", methods=["POST"])
-def create_team():
+def create_team():    
     json_input = request.get_json()
 
     # validate keys
@@ -100,6 +103,9 @@ def create_team():
     if json_input["member1"] is None or json_input["member2"] is None:
         return jsonify({"status": "error", "message": "!DEV missing data"}), 400
 
+    if not create_page_enabled:
+        return jsonify({"status": "error", "message": "Team creation is not enabled!"})
+        
     # create data tuple
     error = add_team(
         Team(
@@ -112,14 +118,16 @@ def create_team():
     )
 
     if error is None:
-        return jsonify({"status": "ok"})
+        resp = make_response(jsonify({"status": "ok"}))
+        resp.set_cookie("teamcreated", "yes", max_age=3600)
+        return resp
     else:
         return jsonify({"status": "error", "message": error})
 
 
 # vote for a team
 @app.route("/vote/", methods=["POST"])
-def vote_team():
+def vote_team():    
     json_input = request.get_json()
 
     # validate keys
@@ -133,7 +141,7 @@ def vote_team():
     if vote_input != 0 and vote_input != 1:
         return jsonify({"status": "error", "message": "!DEV invalid vote"}), 400
 
-    if cur_team == -1:
+    if cur_team == -1 or not voting_page_enabled:
         return jsonify({"status": "error", "message": "Voting is not open!"})
 
     # add votes
@@ -241,10 +249,30 @@ def get_all():
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        return jsonify({"Teams": [x.toDict() for x in get_all_team_data()]})
+        return jsonify({"teams": [x.toDict() for x in get_all_team_data()]})
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
 
+# admin only route: reset eevrything
+@app.route("/togglepages/", methods=["POST"])
+def toggle_pages():
+    global voting_page_enabled, create_page_enabled
+    
+    json_input = request.get_json()
+
+    # validate keys
+    for key in ["enable_voting", "enable_create"]:
+        if key not in json_input:
+            return jsonify({"status": "error", "message": "!DEV missing data"}), 400
+    pass_input = json_input["pass"]
+
+    # validate pass and then execute
+    if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
+        voting_page_enabled = bool(json_input["enable_voting"])
+        create_page_enabled = bool(json_input["enable_create"])
+        return jsonify({"status": "ok"})
+    else:
+        return jsonify({"status": "error", "message": "Wrong admin password!"})
 
 # admin only route: reset eevrything
 @app.route("/resetall/", methods=["POST"])
@@ -276,12 +304,16 @@ def admin_panel():
 # voting page
 @app.route("/votingpage", methods=["GET", "POST"])
 def voting_page():
+    if not voting_page_enabled:
+        return "Voting is not enabled!"
     return app.send_static_file("votingpage.html")
 
 
 # creation page
 @app.route("/createteam", methods=["GET", "POST"])
 def create_team_page():
+    if not create_page_enabled:
+        return "Team creation is not enabled!"
     return app.send_static_file("createteam.html")
 
 
