@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Team</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Team</h1>
+        <div class="form-group">
+            <label for="create_teamname_tb">Team Name:</label>
+            <input type="text" id="create_teamname_tb" name="create_teamname_tb" required/>
+        </div>
+        <div class="form-group">
+            <label for="create_teamm1_tb">Member 1 Name:</label>
+            <input type="text" id="create_teamm1_tb" name="create_teamm1_tb" required/>
+        </div>
+        <div class="form-group">
+            <label for="create_teamm2_tb">Member 2 Name:</label>
+            <input type="text" id="create_teamm2_tb" name="create_teamm2_tb" required/>
+        </div>
+        <div class="form-group">
+            <label for="create_teamm3_tb">Member 3 Name:</label>
+            <input type="text" id="create_teamm3_tb" name="create_teamm3_tb"/>
+        </div>
+        <div class="form-group">
+            <label for="create_teamm4_tb">Member 4 Name:</label>
+            <input type="text" id="create_teamm4_tb" name="create_teamm4_tb"/>
+        </div>
+        <button onclick="create_team()">Create New Team</button>
+        <div id="error_message" class="error-message"></div>
+        <div id="success_message" class="success-message"></div>
+    </div>
+
+    <script src="/static/testpage.js"></script>
+</body>
+</html>

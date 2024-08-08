@@ -3,21 +3,22 @@ import json
 import hashlib
 import atexit
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 
 PASS_HASH = "fb74185cbe8adab9724de6f3c3bd6f3a56be8fed7784cee31ad26ce13b1a23dd"
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gdst_teams_user:vStONg3I0zIdyC6WbRf9AzXijHxFTJgJ@dpg-cqppt15svqrc7380fp70-a.singapore-postgres.render.com/gdst_teams'
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///stk.db"
 cur_team = -1
 db = SQLAlchemy(app)
+
 
 class Team(db.Model):
     def __init__(self, teamname, member1name, member2name, member3name, member4name):
         if member3name is None and member4name is not None:
             member3name = member4name
-            member4name = None 
-        
+            member4name = None
+
         self.teamname = teamname
         self.member1name = member1name
         self.member2name = member2name
@@ -25,28 +26,33 @@ class Team(db.Model):
         self.member4name = member4name
         self.score = 0
         self.votecount = 0
-    
-    __tablename__ = 'teams'
+
+    __tablename__ = "teams"
     teamid = db.Column(db.Integer, primary_key=True)
-    teamname = db.Column(db.String(256), unique = True)
-    member1name = db.Column(db.String(256), nullable = False)
-    member2name = db.Column(db.String(256), nullable = False)
-    member3name = db.Column(db.String(256), nullable = True)
-    member4name = db.Column(db.String(256), nullable = True)
-    score = db.Column(db.Integer, nullable = False)
-    votecount = db.Column(db.Integer, nullable = False)
-    
+    teamname = db.Column(db.String(256), unique=True)
+    member1name = db.Column(db.String(256), nullable=False)
+    member2name = db.Column(db.String(256), nullable=False)
+    member3name = db.Column(db.String(256), nullable=True)
+    member4name = db.Column(db.String(256), nullable=True)
+    score = db.Column(db.Integer, nullable=False)
+    votecount = db.Column(db.Integer, nullable=False)
+
     # get jsonify-able representation
     def toDict(self):
-        return {k:v for (k, v) in self.__dict__.items() if '_sa_instance_state' not in k}
+        return {
+            k: v for (k, v) in self.__dict__.items() if "_sa_instance_state" not in k
+        }
+
 
 def get_all_team_data():
     return list(db.session.query(Team))
 
+
 def get_top_teams():
     res: list = get_all_team_data()
-    res = list(filter(lambda x: x.votecount != 0, res))
-    res.sort(key = lambda x: (x.score / x.votecount), reverse = True)
+    res.sort(
+        key=lambda x: ((x.score / x.votecount) if x.votecount != 0 else 0), reverse=True
+    )
     return res
 
 
@@ -82,13 +88,9 @@ def add_votes(score):
 
 
 # create a team
-@app.route("/create/<data>", methods=["POST"])
-def create_team(data):
-    # validate json
-    try:
-        json_input = json.loads(data)
-    except:
-        return jsonify({"status": "error", "message": "!DEV couldn't parse data"}), 400
+@app.route("/create/", methods=["POST"])
+def create_team():
+    json_input = request.get_json()
 
     # validate keys
     for key in ["team_name", *[f"member{x}" for x in range(1, 5)]]:
@@ -99,13 +101,15 @@ def create_team(data):
         return jsonify({"status": "error", "message": "!DEV missing data"}), 400
 
     # create data tuple
-    error = add_team(Team(
-        json_input["team_name"],
-        json_input["member1"],
-        json_input["member2"],
-        json_input["member3"],
-        json_input["member4"],
-    ))
+    error = add_team(
+        Team(
+            json_input["team_name"],
+            json_input["member1"],
+            json_input["member2"],
+            json_input["member3"],
+            json_input["member4"],
+        )
+    )
 
     if error is None:
         return jsonify({"status": "ok"})
@@ -114,13 +118,9 @@ def create_team(data):
 
 
 # vote for a team
-@app.route("/vote/<string:data>", methods=["POST"])
-def vote_team(data):
-    # validate json
-    try:
-        json_input = json.loads(data)
-    except:
-        return jsonify({"status": "error", "message": "!DEV couldn't parse data"}), 400
+@app.route("/vote/", methods=["POST"])
+def vote_team():
+    json_input = request.get_json()
 
     # validate keys
     for key in ["vote"]:
@@ -140,7 +140,9 @@ def vote_team(data):
     error = add_votes(vote_input)
 
     if error is None:
-        return jsonify({"status": "ok"})
+        resp = make_response(jsonify({"status": "ok"}))
+        resp.set_cookie("voted", "yes", max_age=60)
+        return resp
     else:
         return jsonify({"status": "error", "message": error})
 
@@ -167,19 +169,15 @@ def current_votes():
 @app.route("/top/", methods=["GET"])
 def top_votes():
     res = get_top_teams()
-    return jsonify({"status": "ok", "team": [x.toDict() for x in res]})
+    return jsonify({"status": "ok", "teams": [x.toDict() for x in res]})
 
 
 # admin only route: change current team
-@app.route("/change/<string:data>", methods=["POST"])
-def change_team(data):
+@app.route("/change/", methods=["POST"])
+def change_team():
     global cur_team
 
-    # validate json
-    try:
-        json_input = json.loads(data)
-    except:
-        return jsonify({"status": "error", "message": "!DEV couldn't parse data"}), 400
+    json_input = request.get_json()
 
     # validate keys
     for key in ["team_id", "pass"]:
@@ -202,15 +200,11 @@ def change_team(data):
 
 
 # admin only route: delete a team
-@app.route("/delete/<string:data>", methods=["POST"])
-def delete_team(data):
+@app.route("/delete/", methods=["POST"])
+def delete_team():
     global cur_team
 
-    # validate json
-    try:
-        json_input = json.loads(data)
-    except:
-        return jsonify({"status": "error", "message": "!DEV couldn't parse data"}), 400
+    json_input = request.get_json()
 
     # validate keys
     for key in ["team_id", "pass"]:
@@ -235,13 +229,9 @@ def delete_team(data):
 
 
 # admin only route: get all data from all teams as json
-@app.route("/getall/<string:data>", methods=["GET"])
-def get_all(data):
-    # validate json
-    try:
-        json_input = json.loads(data)
-    except:
-        return jsonify({"status": "error", "message": "!DEV couldn't parse data"}), 400
+@app.route("/getall/", methods=["POST"])
+def get_all():
+    json_input = request.get_json()
 
     # validate keys
     for key in ["pass"]:
@@ -251,18 +241,15 @@ def get_all(data):
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        return jsonify([x.toDict() for x in get_all_team_data()])
+        return jsonify({"Teams": [x.toDict() for x in get_all_team_data()]})
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
 
+
 # admin only route: reset eevrything
-@app.route("/resetall/<string:data>", methods=["GET"])
-def reset_all(data):
-    # validate json
-    try:
-        json_input = json.loads(data)
-    except:
-        return jsonify({"status": "error", "message": "!DEV couldn't parse data"}), 400
+@app.route("/resetall/", methods=["POST"])
+def reset_all():
+    json_input = request.get_json()
 
     # validate keys
     for key in ["pass"]:
@@ -286,12 +273,6 @@ def admin_panel():
     return app.send_static_file("adminpanel.html")
 
 
-# test panel page
-@app.route("/test_panel_af83eb45", methods=["GET", "POST"])
-def test_panel():
-    return app.send_static_file("testpanel.html")
-
-
 # voting page
 @app.route("/votingpage", methods=["GET", "POST"])
 def voting_page():
@@ -311,6 +292,6 @@ def live_score_page():
 
 
 # final leaderboard page
-@app.route("/finalleaderboard", methods=["GET", "POST"])
-def final_leaderboard_page():
-    return app.send_static_file("finalleaderboard.html")
+@app.route("/leaderboard", methods=["GET", "POST"])
+def leaderboard_page():
+    return app.send_static_file("leaderboard.html")
