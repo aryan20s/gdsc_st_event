@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetAlert Example</title>
+    <!-- Include SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+
+    <h1>SweetAlert Example</h1>
+    <button id="successButton">Show Success Alert</button>
+
+    <!-- Include SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('successButton').addEventListener('click', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Success!',
+                text: 'Your action was completed.',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+
+</body>
+</html>
