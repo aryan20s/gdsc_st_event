@@ -12,10 +12,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["GDSC_ST_DB_FILE"]
 db = SQLAlchemy(app)
 
-app.config["CUR_TEAM"] = -1
-app.config["VOTING_ENABLE"] = False
-app.config["CREATE_ENABLE"] = False
-
 
 class Team(db.Model):
     def __init__(self, teamname, member1name, member2name, member3name, member4name):
@@ -50,6 +46,30 @@ class Team(db.Model):
         }
 
 
+class Config(db.Model):
+    def __init__(self):
+        self.config_id = 1
+        self.cur_team = -1
+        self.voting_page_enabled = False
+        self.create_page_enabled = False
+
+    config_id = db.Column(db.Integer, primary_key=True)
+    cur_team = db.Column(db.Integer, nullable=True)
+    voting_page_enabled = db.Column(db.Boolean, nullable=True)
+    create_page_enabled = db.Column(db.Boolean, nullable=True)
+
+    __tablename__ = "config"
+
+
+def get_config():
+    return db.session.get(Config, 1)
+
+
+def flush_config():
+    db.session.flush()
+    db.session.commit()
+
+
 def get_all_team_data():
     return list(db.session.query(Team))
 
@@ -82,17 +102,18 @@ def remove_team(team_id):
     db.session.delete(team)
     db.session.commit()
 
+
 def set_voting_done():
-    team = db.session.get(Team, app.config["CUR_TEAM"])
+    team = db.session.get(Team, get_config().cur_team)
     if team is None:
         return
     team.voting_done = True
     db.session.flush()
     db.session.commit()
-    
+
 
 def add_votes(score):
-    team = db.session.get(Team, app.config["CUR_TEAM"])
+    team = db.session.get(Team, get_config().cur_team)
     if team is None:
         return "Team does not exist!"
     team.score += score
@@ -103,7 +124,7 @@ def add_votes(score):
 
 # create a team
 @app.route("/create/", methods=["POST"])
-def create_team():    
+def create_team():
     json_input = request.get_json()
 
     # validate keys
@@ -114,9 +135,9 @@ def create_team():
     if json_input["member1"] is None or json_input["member2"] is None:
         return jsonify({"status": "error", "message": "!DEV missing data"}), 400
 
-    if not app.config["CREATE_ENABLE"]:
+    if not get_config().create_page_enabled:
         return jsonify({"status": "error", "message": "Team creation is not enabled!"})
-        
+
     # create data tuple
     error = add_team(
         Team(
@@ -138,7 +159,7 @@ def create_team():
 
 # vote for a team
 @app.route("/vote/", methods=["POST"])
-def vote_team():    
+def vote_team():
     json_input = request.get_json()
 
     # validate keys
@@ -152,7 +173,7 @@ def vote_team():
     if vote_input != 0 and vote_input != 1:
         return jsonify({"status": "error", "message": "!DEV invalid vote"}), 400
 
-    if app.config["CUR_TEAM"] == -1 or not app.config["VOTING_ENABLE"]:
+    if get_config().cur_team == -1 or not get_config().voting_page_enabled:
         return jsonify({"status": "error", "message": "Voting is not open!"})
 
     # add votes
@@ -169,10 +190,10 @@ def vote_team():
 # get votes for current team
 @app.route("/current/", methods=["GET"])
 def current_votes():
-    if app.config["CUR_TEAM"] == -1:
+    if get_config().cur_team == -1:
         return jsonify({"status": "error", "message": "Voting is not open!"})
 
-    cur_team_data: Team = get_team(app.config["CUR_TEAM"])
+    cur_team_data: Team = get_team(get_config().cur_team)
 
     return jsonify(
         {
@@ -206,24 +227,32 @@ def change_team():
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        if app.config["CUR_TEAM"] == team_id_input:
-            return jsonify({"status": "error", "message": "That is already the current team!"})
-        
-        cur_team_data = get_team(app.config["CUR_TEAM"])
+        if get_config().cur_team == team_id_input:
+            return jsonify(
+                {"status": "error", "message": "That is already the current team!"}
+            )
+
+        cur_team_data = get_team(get_config().cur_team)
         if cur_team_data is not None:
             if cur_team_data.votecount > 0:
                 set_voting_done()
-        
+
         new_team_data = get_team(team_id_input)
         if (new_team_data is None) and (team_id_input != -1):
-            app.config["CUR_TEAM"] = -1
+            get_config().cur_team = -1
+            flush_config()
             return jsonify({"status": "error", "message": "Team does not exist!"})
 
-        if new_team_data.voting_done:
-            app.config["CUR_TEAM"] = -1
-            return jsonify({"status": "error", "message": "Voting for this team has concluded!"})
-
-        app.config["CUR_TEAM"] = team_id_input
+        get_config().cur_team = team_id_input
+        flush_config()
+        
+        if (new_team_data is not None) and new_team_data.voting_done:
+            get_config().cur_team = -1
+            flush_config()
+            return jsonify(
+                {"status": "error", "message": "Voting for this team has concluded!"}
+            )
+        
         return jsonify({"status": "ok"})
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
@@ -244,9 +273,10 @@ def delete_team():
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        if team_id_input == app.config["CUR_TEAM"]:
-            app.config["CUR_TEAM"] = -1
+        if team_id_input == get_config().cur_team:
+            get_config().cur_team = -1
         error = remove_team(team_id_input)
+        flush_config()
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
 
@@ -269,18 +299,21 @@ def get_all():
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        return jsonify({
-            "cur_team": app.config["CUR_TEAM"],
-            "voting_page_enabled": app.config["VOTING_ENABLE"],
-            "create_page_enabled": app.config["CREATE_ENABLE"],
-            "teams": [x.toDict() for x in get_all_team_data()]
-        })
+        return jsonify(
+            {
+                "cur_team": get_config().cur_team,
+                "voting_page_enabled": get_config().voting_page_enabled,
+                "create_page_enabled": get_config().create_page_enabled,
+                "teams": [x.toDict() for x in get_all_team_data()],
+            }
+        )
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
 
+
 # admin only route: reset eevrything
 @app.route("/togglepages/", methods=["POST"])
-def toggle_pages():    
+def toggle_pages():
     json_input = request.get_json()
 
     # validate keys
@@ -291,11 +324,13 @@ def toggle_pages():
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        app.config["VOTING_ENABLE"] = bool(json_input["enable_voting"])
-        app.config["CREATE_ENABLE"] = bool(json_input["enable_create"])
+        get_config().voting_page_enabled = json_input["enable_voting"]
+        get_config().create_page_enabled = json_input["enable_create"]
+        flush_config()
         return jsonify({"status": "ok"})
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
+
 
 # admin only route: reset eevrything
 @app.route("/resetall/", methods=["POST"])
@@ -312,6 +347,9 @@ def reset_all():
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
         db.drop_all()
         db.create_all()
+        
+        db.session.add(Config())
+        
         db.session.commit()
         return jsonify({"status": "ok"})
     else:
@@ -327,7 +365,7 @@ def admin_panel():
 # voting page
 @app.route("/votingpage", methods=["GET", "POST"])
 def voting_page():
-    if not app.config["VOTING_ENABLE"]:
+    if not get_config().voting_page_enabled:
         return "Voting is not enabled!"
     return app.send_static_file("votingpage.html")
 
@@ -335,7 +373,7 @@ def voting_page():
 # creation page
 @app.route("/createteam", methods=["GET", "POST"])
 def create_team_page():
-    if not app.config["CREATE_ENABLE"]:
+    if not get_config().create_page_enabled:
         return "Team creation is not enabled!"
     return app.send_static_file("createteam.html")
 
