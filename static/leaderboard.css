@@ -57,7 +57,7 @@ body {
   gap: 2rem;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 580px) {
   .nav-logo img {
     max-height: 3.88vh;
   }
