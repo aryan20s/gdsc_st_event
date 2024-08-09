@@ -30,6 +30,7 @@ class Team(db.Model):
         self.member4name = member4name
         self.score = 0
         self.votecount = 0
+        self.voting_done = False
 
     __tablename__ = "teams"
     teamid = db.Column(db.Integer, primary_key=True)
@@ -40,6 +41,7 @@ class Team(db.Model):
     member4name = db.Column(db.String(256), nullable=True)
     score = db.Column(db.Integer, nullable=False)
     votecount = db.Column(db.Integer, nullable=False)
+    voting_done = db.Column(db.Boolean, nullable=False)
 
     # get jsonify-able representation
     def toDict(self):
@@ -80,6 +82,14 @@ def remove_team(team_id):
     db.session.delete(team)
     db.session.commit()
 
+def set_voting_done():
+    team = db.session.get(Team, cur_team)
+    if team is None:
+        return
+    team.voting_done = True
+    db.session.flush()
+    db.session.commit()
+    
 
 def add_votes(score):
     team = db.session.get(Team, cur_team)
@@ -198,14 +208,27 @@ def change_team():
 
     # validate pass and then execute
     if hashlib.sha3_256(pass_input.encode("utf-8")).hexdigest() == PASS_HASH:
-        if (get_team(team_id_input) is None) and (team_id_input != -1):
+        if cur_team == team_id_input:
+            return jsonify({"status": "error", "message": "That is already the current team!"})
+        
+        cur_team_data = get_team(cur_team)
+        if cur_team_data is not None:
+            if cur_team_data.votecount > 0:
+                set_voting_done()
+        
+        new_team_data = get_team(team_id_input)
+        if (new_team_data is None) and (team_id_input != -1):
+            cur_team = -1
             return jsonify({"status": "error", "message": "Team does not exist!"})
 
+        if new_team_data.voting_done:
+            cur_team = -1
+            return jsonify({"status": "error", "message": "Voting for this team has concluded!"})
+
         cur_team = team_id_input
+        return jsonify({"status": "ok"})
     else:
         return jsonify({"status": "error", "message": "Wrong admin password!"})
-
-    return jsonify({"status": "ok"})
 
 
 # admin only route: delete a team
