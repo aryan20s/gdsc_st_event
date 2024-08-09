@@ -1,11 +1,26 @@
 /* Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #121212; /* Dark background */
-    color: #e0e0e0; /* Light text color */
-}
+    background: linear-gradient(45deg, #4285F4, #DB4437, #F4B400, #0F9D58);
+    background-size: 300% 300%;
+    animation: gradient 4s ease infinite;
+    font-family: 'Poppins', sans-serif;
+    }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+  
+    50% {
+      background-position: 100% 50%;
+    }
+  
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 
 .container {
     max-width: 90%;

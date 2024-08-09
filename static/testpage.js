@@ -41,15 +41,18 @@ function create_team() {
     const team_m4 = document.getElementById("create_teamm4_tb").value;
 
     if (team_name === "") {
-        setMessage(true, "Team name must be specified!");
+        // setMessage(true, "Team name must be specified!");
+        alert("Team name must be specified!")
         return;
     }
     if (team_m1 === "") {
-        setMessage(true, "Member 1 name must be specified!");
+        // setMessage(true, "Member 1 name must be specified!");
+        alert("Member 1 name must be specified!")
         return;
     }
     if (team_m2 === "") {
-        setMessage(true, "Member 2 name must be specified!");
+        // setMessage(true, "Member 2 name must be specified!");
+        alert("Member 2 name must be specified!")
         return;
     }
 

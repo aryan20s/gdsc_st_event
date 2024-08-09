@@ -1,0 +1,79 @@
+/* From Uiverse.io by andrew-demchenk0 */ 
+
+/* Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+h1, h2, h3, h4, h5, h6, p, a, label, button{
+  font-family: 'Poppins', sans-serif;
+}
+
+.main{
+  height: 60vh;
+  border-radius: 50px;
+}
+
+.rounds{
+  border-radius: 30px;
+}
+
+body { /* Ensure the gradient covers the full viewport height */
+    background: linear-gradient(45deg, #4285F4, #DB4437, #F4B400, #0F9D58);
+    background-size: 300% 300%;
+    animation: gradient 4s ease infinite;
+    font-family: 'Poppins', sans-serif;
+    height: 100%;
+    }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+  
+    50% {
+      background-position: 100% 50%;
+    }
+  
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+
+
+
+.votebtn input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .votebtn {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  svg {
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 50px;
+    width: 50px;
+    transition: all 0.3s;
+    fill: #666;
+  }
+  
+  svg:hover {
+    transform: scale(1.1) rotate(-10deg);
+  }
+  
+  .votebtn input:checked ~ svg {
+    fill: #2196F3;
+  }
+  
+  .down input:checked ~ svg {
+    fill: #f32121;
+  }
