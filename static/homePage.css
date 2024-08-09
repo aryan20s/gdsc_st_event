@@ -118,3 +118,9 @@ body {
 .inner-cont{
   border-radius: 50px;
 }
+
+@media (max-width: 580px) {
+  .nav-logo img {
+    max-height: 3.88vh;
+  }
+}
