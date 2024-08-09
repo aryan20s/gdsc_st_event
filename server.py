@@ -360,7 +360,7 @@ def reset_all():
 # admin panel page
 @app.route("/admin_panel_7b2b191f", methods=["GET", "POST"])
 def admin_panel():
-    return app.send_static_file("adminpanel.html")
+    return app.send_static_file("admin_panel_7b2b191f.html")
 
 
 # voting page
@@ -378,16 +378,10 @@ def create_team_page():
         return "Team creation is not enabled!"
     return app.send_static_file("createteam.html")
 
-
+# homepage
 @app.route("/")
-
 def home_page():
     return app.send_static_file("homePage.html")
-
-# live score page
-@app.route("/livescore", methods=["GET", "POST"])
-def live_score_page():
-    return app.send_static_file("livescore.html")
 
 
 # final leaderboard page
