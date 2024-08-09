@@ -31,9 +31,21 @@ body {
 .main{
     height: 80vh;
     border-radius: 50px;
+    overflow: scroll;
+
 }
+/* Webkit-specific scrollbar hiding */
+.main::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+.main {
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+}
+
 /* #leaderboard {
-    margin-top: 20px;
+    overflow: scroll;
 } */
 
 .leaderboard-item {

@@ -22,6 +22,10 @@ h1, h2, h3, h4, h5, h6, p, a, label, button{
   gap: 2rem;
 }
 
+.main{
+  border-radius: 50px;
+}
+
 @media (max-width: 580px) {
   .nav-logo img {
     max-height: 3.88vh;
