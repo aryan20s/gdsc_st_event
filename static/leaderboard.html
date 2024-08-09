@@ -24,11 +24,96 @@
     />
   </head>
   <body>
-    <div class="container">
-      <h1>Leaderboard</h1>
-      <div id="leaderboard"></div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand nav-logo" href="#">
+        <img src="/static/logo.png" alt="Logo" class="d-inline-block align-text-top">
+      </a>
+      <!-- Toggler only visible on small screens -->
+      <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+        aria-controls="offcanvasNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <!-- Offcanvas for mobile view -->
+      <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h1 class="offcanvas-title" id="offcanvasNavbarLabel">MENU</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Hide"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          <li class="nav-item h5">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item h5">
+            <a class="nav-link" href="/createteam">Register</a>
+          </li>
+          <li class="nav-item h5">
+            <a class="nav-link" href="/votingpage">Vote</a>
+          </li>
+          <li class="nav-item h5">
+            <a class="nav-link" href="/leaderboard">Leaderboard</a>
+          </li>
+            <!-- Add more nav items here if needed -->
+          </ul>
+        </div>
+      </div>
+  
+      <!-- Regular navbar for larger screens -->
+      <div class="collapse navbar-collapse d-none d-lg-flex inner">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item h5">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item h5">
+            <a class="nav-link" href="/createteam">Register</a>
+          </li>
+          <li class="nav-item h5">
+            <a class="nav-link" href="/votingpage">Vote</a>
+          </li>
+          <li class="nav-item h5">
+            <a class="nav-link" href="/leaderboard">Leaderboard</a>
+          </li>
+          <!-- Add more nav items here if needed -->
+        </ul>
+      </div>
+    </div>
+  </nav>
+    <div class="container mt-5 main bg-white col-11 col-xl-6">
+      <h1 class="text-center pt-3">Leaderboard</h1>
+      <div class="leaderboard-item mt-5 bg-black">
+            <span class="rank">Rank</span>
+            <span class="team">Team Name</span>
+            <span class="score">Score</span>
+      </div>
+      <div id="leaderboard">
+      </div>
     </div>
     
     <script src="/static/leaderboard.js"></script>
+    <script src="/static/confetti.js"></script>
+    <!-- Confetti  JS-->
+    <script>
+
+        // start
+
+        const start = () => {
+            setTimeout(function() {
+                confetti.start()
+            }, 0); // 1000 is time that after 1 second start the confetti ( 1000 = 1 sec)
+        };
+
+        //  Stop
+
+        const stop = () => {
+            setTimeout(function() {
+                confetti.stop()
+            }, 3000); // 5000 is time that after 5 second stop the confetti ( 5000 = 5 sec)
+        };
+
+        start();
+        stop();
+    </script>
   </body>
 </html>

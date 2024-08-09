@@ -9,7 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 PASS_HASH = "fb74185cbe8adab9724de6f3c3bd6f3a56be8fed7784cee31ad26ce13b1a23dd"
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["GDSC_ST_DB_FILE"]
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["GDSC_ST_DB_FILE"]
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///stk.db"
 db = SQLAlchemy(app)
 
 
@@ -377,6 +378,11 @@ def create_team_page():
         return "Team creation is not enabled!"
     return app.send_static_file("createteam.html")
 
+
+@app.route("/")
+
+def home_page():
+    return app.send_static_file("homePage.html")
 
 # live score page
 @app.route("/livescore", methods=["GET", "POST"])

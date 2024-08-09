@@ -15,14 +15,14 @@ function displayLeaderboard(leaderboard) {
     leaderboardContainer.innerHTML = '';
 
     // table header
-    const leaderboardItem = document.createElement('div');
-    leaderboardItem.classList.add('leaderboard-item');
-    leaderboardItem.innerHTML = `
-        <span class="rank">Rank</span>
-        <span class="team">Team Name</span>
-        <span class="score">Score</span>
-    `;
-    leaderboardContainer.appendChild(leaderboardItem);
+    // const leaderboardItem = document.createElement('div');
+    // leaderboardItem.classList.add('leaderboard-item');
+    // leaderboardItem.innerHTML = `
+    //     <span class="rank">Rank</span>
+    //     <span class="team">Team Name</span>
+    //     <span class="score">Score</span>
+    // `;
+    // leaderboardContainer.appendChild(leaderboardItem);
 
     // table rows
     leaderboard.forEach((team, index) => {

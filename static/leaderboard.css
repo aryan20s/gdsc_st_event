@@ -1,10 +1,15 @@
 /* Base Styles */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
+h1, h2, h3, h4, h5, h6, p, a, label, button{
+    font-family: 'Poppins', sans-serif;
+  }
+
 body {
     background: linear-gradient(45deg, #4285F4, #DB4437, #F4B400, #0F9D58);
     background-size: 300% 300%;
     animation: gradient 4s ease infinite;
+    min-height: 100vh;
     font-family: 'Poppins', sans-serif;
     }
   
@@ -22,104 +27,32 @@ body {
     }
   }
 
-.container {
-    max-width: 90%;
-    margin: auto;
-    padding: 20px;
-    background-color: #1e1e1e; /* Slightly lighter dark background */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
+
+.main{
+    height: 80vh;
+    border-radius: 50px;
 }
-
-h1 {
-    text-align: center;
-    color: #f5f5f5; /* Slightly lighter text for the heading */
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin: 10px 0 5px;
-    color: #e0e0e0;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #333;
-    border-radius: 4px;
-    background-color: #2c2c2c; /* Darker input background */
-    color: #e0e0e0;
-}
-
-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #6200ee; /* Purple button */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #3700b3; /* Darker purple on hover */
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-
-    button {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-
-    textarea {
-        font-size: 14px;
-    }
-
-    label {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 10px;
-    }
-
-    button {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-
-    textarea {
-        font-size: 12px;
-    }
-
-    label {
-        font-size: 12px;
-    }
-}
-
-/* Additional Styles for Leaderboard */
-#leaderboard {
+/* #leaderboard {
     margin-top: 20px;
-}
+} */
 
 .leaderboard-item {
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    background-color: #2c2c2c; /* Darker background for leaderboard items */
+    background-color: gray; /* Darker background for leaderboard items */
     border-radius: 4px;
     margin-bottom: 10px;
+    color: white;
+}
+
+.nav-logo img {
+  height:7vh;
+  object-fit: contain;
+}
+
+.inner ul{
+  gap: 2rem;
 }
 
 .leaderboard-item .rank {
