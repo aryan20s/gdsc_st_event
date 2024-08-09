@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vote</title>
     <link rel="stylesheet" href="/static/voting.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -74,8 +75,9 @@
       </div>
     </nav>
     <div class="container bg-white col-11 mt-5 col-xl-4 main">
-        <h1 class="text-center pt-4">Cast Your Vote</h1>
-        <p id="team_name_h2" class="display-6 text-center pt-5"></p>
+        <h1 class="text-center">Cast Your Vote</h1>
+        <h5 id="team_name_h" class="text-center"></h2>
+        </h1>
         <div class="container d-flex justify-content-center votes ">
             <div class="rounds bg-black p-3 m-5">
                 <label class="votebtn" onclick="vote_for_team(0)">
@@ -106,11 +108,10 @@
                 </label>
             </div>
         </div>
-        <div id="error_message" class="error-message"></div>
-        <div id="success_message" class="success-message"></div>
     </div>
 
-    <script src="/static/testpage.js"></script>
+    <script src="/static/commonfuncs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -118,9 +119,9 @@
                 teamname = JSON.parse(responseText).team_name
 
                 if (teamname === undefined || teamname === null) {
-                    document.getElementById('team_name_h2').textContent = "Voting is currently closed.";
+                    document.getElementById('team_name_h').textContent = "Voting is currently closed.";
                 } else {
-                    document.getElementById('team_name_h2').textContent = `Voting for ${teamname}`;
+                    document.getElementById('team_name_h').textContent = `Voting for ${teamname}`;
                 }
 
             })

@@ -10,16 +10,20 @@ function makeReq(path, data, method, callback) {
 }
 
 function setMessage(error, message) {
-    let errorMessageDiv = document.getElementById('error_message');
-    let successMessageDiv = document.getElementById('success_message');
     if (error) {
-        successMessageDiv.style.display = 'none';
-        errorMessageDiv.style.display = 'block';
-        errorMessageDiv.innerText = 'Error: ' + message;
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: message,
+            confirmButtonText: 'OK'
+        });
     } else {
-        errorMessageDiv.style.display = 'none';
-        successMessageDiv.style.display = 'block';
-        successMessageDiv.innerText = message;
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: message,
+            confirmButtonText: 'OK'
+        });
     }
 }
 
@@ -41,18 +45,15 @@ function create_team() {
     const team_m4 = document.getElementById("create_teamm4_tb").value;
 
     if (team_name === "") {
-        // setMessage(true, "Team name must be specified!");
-        alert("Team name must be specified!")
+        setMessage(true, "Team name must be specified!");
         return;
     }
     if (team_m1 === "") {
-        // setMessage(true, "Member 1 name must be specified!");
-        alert("Member 1 name must be specified!")
+        setMessage(true, "Member 1 name must be specified!");
         return;
     }
     if (team_m2 === "") {
-        // setMessage(true, "Member 2 name must be specified!");
-        alert("Member 2 name must be specified!")
+        setMessage(true, "Member 2 name must be specified!");
         return;
     }
 
@@ -74,7 +75,7 @@ function vote_for_team(score) {
     if (parts.length === 2) team_voted = parts.pop().split(';').shift();
 
     if (team_voted !== null) {
-        setMessage(true, "You cannot vote for another minute!");
+        setMessage(true, "You cannot vote again yet!");
         return;
     }
 

@@ -6,21 +6,14 @@ h1, h2, h3, h4, h5, h6, p, a, label, button{
 }
 
 .nav-logo img {
-  height: auto; /* Make sure the height is responsive */
-  max-height: 7vh; /* Constrain the maximum height to 7vh */
-  width: auto; /* Ensure the width adjusts proportionally */
+  height:7vh;
   object-fit: contain;
 }
 
-.inner ul {
+.inner ul{
   gap: 2rem;
 }
 
-@media (max-width: 580px) {
-  .nav-logo img {
-    max-height: 3.88vh;
-  }
-}
 body { /* Ensure the gradient covers the full viewport height */
     background: linear-gradient(45deg, #4285F4, #DB4437, #F4B400, #0F9D58);
     background-size: 300% 300%;
