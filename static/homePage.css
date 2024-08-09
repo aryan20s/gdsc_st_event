@@ -51,14 +51,21 @@ body {
 }
 
 .nav-logo img {
-  height:7vh;
+  height: auto; /* Make sure the height is responsive */
+  max-height: 7vh; /* Constrain the maximum height to 7vh */
+  width: auto; /* Ensure the width adjusts proportionally */
   object-fit: contain;
 }
 
-.inner ul{
+.inner ul {
   gap: 2rem;
 }
 
+@media (max-width: 992px) {
+  .nav-logo img {
+    max-height: 3.88vh;
+  }
+}
 /* From Uiverse.io by adamgiebl */ 
 .cssbuttons-io-button {
   background: #a370f0;
