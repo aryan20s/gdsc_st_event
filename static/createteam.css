@@ -102,9 +102,3 @@ textarea {
 hr{
     color: white;
 }
-
-@media (max-width: 580px) {
-  .nav-logo img {
-    max-height: 3.88vh;
-  }
-}

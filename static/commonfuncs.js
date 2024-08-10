@@ -23,10 +23,6 @@ function setMessage(error, message) {
             title: 'Success!',
             text: message,
             confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/';
-            }
         });
     }
 }
@@ -83,7 +79,6 @@ function vote_for_team(score) {
         return;
     }
 
-    setMessage(false, "Voting...");
     makeReq("/vote/", `{"vote": ${score}}`, "POST", responseText => {
         let jsonData = JSON.parse(responseText);
         if (jsonData.status !== "ok") {
