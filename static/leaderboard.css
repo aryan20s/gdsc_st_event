@@ -39,6 +39,7 @@ body {
   display: none; /* Hide scrollbar */
 }
 
+
 .main {
   scrollbar-width: none; /* Hide scrollbar for Firefox */
   -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
@@ -75,10 +76,10 @@ body {
   }
 }
 
-.leaderboard-item .rank {
+/* .leaderboard-item .rank {
     flex: 1;
     text-align: center;
-    color: #f5f5f5; /* Lighter text color for rank */
+    color: #f5f5f5; 
 }
 
 .leaderboard-item .user {
@@ -92,4 +93,22 @@ body {
     text-align: right;
     padding-right: 10px;
     color: #e0e0e0;
+} */
+
+.team {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 50%;
+}
+
+.rank {
+  width: 20%;
+  text-align: center;
+}
+
+.score {
+  width: 20%;
+  text-align: center;
+
 }

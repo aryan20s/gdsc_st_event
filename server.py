@@ -9,8 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 PASS_HASH = "fb74185cbe8adab9724de6f3c3bd6f3a56be8fed7784cee31ad26ce13b1a23dd"
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["GDSC_ST_DB_FILE"]
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///stk.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["GDSC_ST_DB_FILE"]
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///stk.db"
 db = SQLAlchemy(app)
 
 

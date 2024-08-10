@@ -23,6 +23,10 @@ function setMessage(error, message) {
             title: 'Success!',
             text: message,
             confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/';
+            }
         });
     }
 }

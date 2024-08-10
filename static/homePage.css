@@ -31,6 +31,8 @@ body {
 
   .image-container{
     display: flex;
+    transition: 0.2s ease-in-out;
+
   }
 
 .image-container img {
@@ -117,4 +119,15 @@ body {
 
 .inner-cont{
   border-radius: 50px;
+}
+
+@media (max-width: 580px) {
+  .nav-logo img {
+    max-height: 3.88vh;
+  }
+}
+
+.image-container:hover {
+  transform: scale(125%);
+  transition: 0.2s ease-in-out;
 }
